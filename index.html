@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        body {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+
+        .slider {
+            height: 500px;
+            width: 1130px;
+            margin: 30px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        ul {
+            position: absolute;
+            display: inline-flex;
+        }
+
+
+
+        .slider ul li:first-child {
+            display: block;
+        }
+
+
+        .arrow {
+            display: none;
+        }
+
+        .slider:hover .arrow {
+            display: block;
+        }
+
+        .arrow-left,
+        .arrow-right {
+            font-family: "SimSun", "宋体";
+            width: 30px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 60px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 30px;
+        }
+
+        .arrow-left:hover,
+        .arrow-right:hover {
+            background-color: rgba(0, 0, 0, .5);
+        }
+
+        .arrow-left {
+            left: 0;
+        }
+
+        .arrow-right {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slider">
+        <!--图片容器  6图 -->
+        <ul>
+            <li><a href="#"><img src="images/1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/2.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/3.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/4.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/5.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/6.jpg" alt=""></a></li>
+            <!-- <li><a href="#"><img src="images/1.jpg" alt=""></a></li> -->
+        </ul>
+        <!--箭头-->
+        <div class="arrow">
+            <span class="arrow-left">&lt;</span>
+            <span class="arrow-right">&gt;</span>
+        </div>
+    </div>
+
+    <script src="./jquery-1.12.4.js"></script>
+    <script>
+        //声明一个变量记录当前图片下标
+        let index = 0
+
+        // 克隆一个li；
+        // 为无线轮播作准备
+
+        $($('.slider>ul>li')[0]).clone(true).appendTo('.slider>ul')
+
+
+
+        //1. 右边滚动 
+        $('.slider').on('click', '.arrow-right', function () {
+
+            //1.1 判断
+            if (index == $('.slider>ul>li').length - 1) {
+                index = 0;
+                $('.slider>ul').css({ left: 0 })
+            }
+            index++
+
+            //1.2 开始滚动
+            $('.slider>ul').stop().animate({
+                left: -index * $('.slider>ul>li').width()
+            })
+        })
+
+
+        //2. 左边滚动
+        $('.slider').on('click', '.arrow-left', function () {
+
+            //1.1 判断
+            if (index == 0) {
+                index = $('.slider>ul>li').length - 1;
+                $('.slider>ul').css({ left: -index * $('.slider>ul>li').width() })
+            }
+            index--
+
+            //1.2 开始滚动
+            $('.slider>ul').stop().animate({
+                left: -index * $('.slider>ul>li').width()
+            })
+        })
+
+
+
+
+    </script>
+</body>
+
+</html>
