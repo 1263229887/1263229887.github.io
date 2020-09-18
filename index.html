@@ -1,147 +1,286 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>轮播图</title>
-    <style>
+    <title></title>
+    <style type="text/css">
         * {
-            margin: 0;
             padding: 0;
+            margin: 0;
             list-style: none;
+            border: 0;
         }
 
-        body {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-
-        .slider {
-            height: 500px;
-            width: 1130px;
-            margin: 30px auto;
+        .all {
+            width: 520px;
+            height: 280px;
+            padding: 7px;
+            border: 1px solid #ccc;
+            margin: 100px auto;
             position: relative;
+        }
+
+        .screen {
+            width: 520px;
+            height: 280px;
             overflow: hidden;
+            position: relative;
         }
 
+        .screen li {
+            width: 520px;
+            height: 280px;
+            overflow: hidden;
+            float: left;
+        }
 
-
-        ul {
+        .screen ul {
             position: absolute;
-            display: inline-flex;
+            left: 0;
+            top: 0px;
+            width: 3120px;
         }
 
-
-
-        .slider ul li:first-child {
-            display: block;
+        .all ol {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            line-height: 20px;
+            text-align: center;
         }
 
+        .all ol li {
+            float: left;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+            cursor: pointer;
+        }
 
-        .arrow {
+        .all ol li.current {
+            background: yellow;
+        }
+
+        #arr {
             display: none;
         }
 
-        .slider:hover .arrow {
-            display: block;
-        }
-
-        .arrow-left,
-        .arrow-right {
-            font-family: "SimSun", "宋体";
-            width: 30px;
-            height: 60px;
-            background-color: rgba(0, 0, 0, 0.1);
+        #arr span {
+            width: 40px;
+            height: 40px;
             position: absolute;
+            left: 5px;
             top: 50%;
-            margin-top: -30px;
+            margin-top: -20px;
+            background: #000;
             cursor: pointer;
+            line-height: 40px;
             text-align: center;
-            line-height: 60px;
-            color: #fff;
-            font-weight: 700;
+            font-weight: bold;
+            font-family: '黑体';
             font-size: 30px;
+            color: #fff;
+            opacity: 0.3;
+            border: 1px solid #fff;
         }
 
-        .arrow-left:hover,
-        .arrow-right:hover {
-            background-color: rgba(0, 0, 0, .5);
-        }
-
-        .arrow-left {
-            left: 0;
-        }
-
-        .arrow-right {
-            right: 0;
+        #arr #right {
+            right: 5px;
+            left: auto;
         }
     </style>
 </head>
 
 <body>
-    <div class="slider">
-        <!--图片容器  6图 -->
-        <ul>
-            <li><a href="#"><img src="images/1.jpg" alt=""></a></li>
-            <li><a href="#"><img src="images/2.jpg" alt=""></a></li>
-            <li><a href="#"><img src="images/3.jpg" alt=""></a></li>
-            <li><a href="#"><img src="images/4.jpg" alt=""></a></li>
-            <li><a href="#"><img src="images/5.jpg" alt=""></a></li>
-            <li><a href="#"><img src="images/6.jpg" alt=""></a></li>
-            <!-- <li><a href="#"><img src="images/1.jpg" alt=""></a></li> -->
-        </ul>
-        <!--箭头-->
-        <div class="arrow">
-            <span class="arrow-left">&lt;</span>
-            <span class="arrow-right">&gt;</span>
+    <div class="all" id='box'>
+        <div class="screen">
+            <ul>
+                <li><img src="images/1.webp" width="520" height="280" /></li>
+                <li><img src="images/2.jpg" width="520" height="280" /></li>
+                <li><img src="images/3.jpg" width="520" height="280" /></li>
+                <li><img src="images/4.jpg" width="520" height="280" /></li>
+                <li><img src="images/5.webp" width="520" height="280" /></li>
+            </ul>
+            <ol>
+                <!-- 动态创建的小方块，添加在这里，样式已经给写好了-->
+            </ol>
+        </div>
+        <div id="arr">
+            <span id="left">&lt;</span>
+            <span id="right">&gt;</span>
         </div>
     </div>
 
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+
     <script>
-        //声明一个变量记录当前图片下标
-        let index = 0
-
-        // 克隆一个li；
-        // 为无线轮播作准备
-
-        $($('.slider>ul>li')[0]).clone(true).appendTo('.slider>ul')
+        //思路
+        //1.获取对应的元素
+        let box = document.getElementById('box');
+        let srceenDiv = document.querySelector('.screen');
 
 
+        //  获取移动的单位宽
+        let unitWidth = srceenDiv.offsetWidth;
+        let ul1 = srceenDiv.children[0];
+        let lisUl = document.querySelectorAll('.screen ul li');
+        let ol1 = srceenDiv.children[1];
 
-        //1. 右边滚动 
-        $('.slider').on('click', '.arrow-right', function () {
+        let arrDiv = document.querySelector('#arr');
+        let leftSpan = document.querySelector('#left')
+        let rightSpan = document.querySelector('#right')
 
-            //1.1 判断
-            if (index == $('.slider>ul>li').length - 1) {
-                index = 0;
-                $('.slider>ul').css({ left: 0 })
+
+        //2.根据轮播图片的个数,来动态的生成右下角的小方块们. 
+        for (let i = 0; i < lisUl.length; i++) {
+            let liNew = document.createElement('li');
+            liNew.innerHTML = i + 1;
+            ol1.appendChild(liNew)
+        }
+
+        //  右下角的小方块其实就是ol中的li标签
+        //  ol中的第一个li标签要有颜色(添加一个current类)
+        let lisOl = ol1.children;
+        lisOl[0].setAttribute('class', 'current')
+
+
+
+        //3.简单轮播
+        //  遍历ol中的每一个li标签
+        for (let i = 0; i < lisOl.length; i++) {
+            //  给每一个li标签添加索引
+            lisOl[i].setAttribute('index', i)
+            //  给每一个li标签设置单击事件. 
+            lisOl[i].onclick = function () {
+                //      颜色排他
+                for (let k = 0; k < lisOl.length; k++) {
+                    lisOl[k].removeAttribute('class', 'current');
+                }
+                this.setAttribute('class', 'current')
+
+                //      获取当前点击的小方块的索引
+                let idx = this.getAttribute('index')
+
+                //      计算要移动的目标位置
+                let target = -idx * unitWidth;
+                //      调用animate来做动画
+                animate(ul1, target)
+
+                liindex = indexPic = idx
             }
-            index++
-
-            //1.2 开始滚动
-            $('.slider>ul').stop().animate({
-                left: -index * $('.slider>ul>li').width()
-            })
-        })
 
 
-        //2. 左边滚动
-        $('.slider').on('click', '.arrow-left', function () {
+        }
 
-            //1.1 判断
-            if (index == 0) {
-                index = $('.slider>ul>li').length - 1;
-                $('.slider>ul').css({ left: -index * $('.slider>ul>li').width() })
+
+        //      注意: ******
+        //4.左右焦点轮播
+        //  显示隐藏左右焦点
+        box.onmouseover = function () {
+            arrDiv.style.display = 'block';
+            clearInterval(timeId)
+        }
+        box.onmouseout = function () {
+            arrDiv.style.display = 'none';
+            timeId = setInterval(rightSpan.onclick, 2000)
+        }
+
+
+        // 克隆一张
+        // 为无限无缝轮播作准备
+        ul1.appendChild(lisUl[0].cloneNode(true))
+
+        //  右边焦点设置点击事件.
+        let indexPic = 0; //记录点击的图片滚出去张数
+        let liindex = 0; //记录右下角滚出去的个数
+
+        rightSpan.onclick = function () {
+            //      移动出去的图片张数++
+
+            if (indexPic == 5) {
+                indexPic = 0
+                ul1.style.left = '0px'
             }
-            index--
+            indexPic++;
 
-            //1.2 开始滚动
-            $('.slider>ul').stop().animate({
-                left: -index * $('.slider>ul>li').width()
-            })
-        })
+            //      计算移动的目标位置
+            let target = -indexPic * unitWidth;
+            //      调用animate来移动
+            animate(ul1, target)
 
+
+            //      右下角小方块的颜色要对应上
+            liindex++;
+            if (liindex == 5) {
+                liindex = 0
+            }
+            for (let i = 0; i < lisOl.length; i++) {
+                lisOl[i].removeAttribute('class')
+            }
+            lisOl[liindex].setAttribute('class', 'current')
+
+        }
+
+        //  左边焦点设置点击事件.
+        leftSpan.onclick = function () {
+            if (indexPic == 0) {
+                indexPic = 5;
+                ul1.style.left = -indexPic * unitWidth + 'px'
+            }
+            indexPic--;
+            let target = -indexPic * unitWidth
+            animate(ul1, target)
+
+
+            //      右下角小方块的颜色要对应上
+            liindex--;
+            if (liindex < 0) {
+                liindex = 4
+            }
+            console.log(liindex);
+            for (let i = 0; i < lisOl.length; i++) {
+                lisOl[i].removeAttribute('class')
+            }
+            lisOl[liindex].setAttribute('class', 'current')
+        }
+
+
+        // 设置计时器实现自动轮播
+        let timeId = null;
+        timeId = setInterval(rightSpan.onclick, 2000)
+
+
+    </script>
+
+    <script>
+
+        //做动画的代码封装一个函数
+        //1.目标位置不定死.
+        //2.做动画的元素不写死
+        //3.动画的方向不写死.
+        function animate(ele, target) {
+            //设置新计时器之前,清空老的计时器.
+            clearInterval(ele.timerId);
+            //设置计时器
+            ele.timerId = setInterval(function () {
+                //获取当前元素的left值
+                let currentLeft = ele.offsetLeft;
+                //设置步长
+                let step = target > currentLeft ? 50 : -50;
+                //计算.
+                currentLeft += step;
+                // console.log(currentLeft);
+                //判断赋值
+                if (Math.abs(currentLeft - target) > Math.abs(step)) {
+                    ele.style.left = currentLeft + "px";
+                } else {
+                    ele.style.left = target + "px";
+                    clearInterval(ele.timerId);
+                }
+            }, 10);
+        }
 
 
 
