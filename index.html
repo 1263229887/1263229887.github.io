@@ -93,8 +93,12 @@
         }
     </style>
 </head>
+<script src="js/jquery-1.12.4.min.js"></script>
 
 <body>
+
+
+
     <div class="all" id='box'>
         <div class="screen">
             <ul>
@@ -285,6 +289,27 @@
 
 
     </script>
+
+    <script>
+
+        //  1.每隔6s.更新随机背景图片
+        getRandomImage()
+        setInterval(getRandomImage, 3000)
+        function getRandomImage() {
+            $.ajax({
+                url: 'https://autumnfish.cn/api/cover/random',
+                type: 'get',
+                dataType: 'json',
+                success: function (backData) {
+                    console.log(backData);
+                    $('body').css('background', `url(${backData.url}) no-repeat top/cover`);
+
+
+                }
+            });
+        }
+    </script>
+
 </body>
 
 </html>
